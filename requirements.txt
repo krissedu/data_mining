@@ -14,14 +14,11 @@ timm==0.9.16
 # Imaging
 pillow==11.1.0
 numpy>=2.2.0,<3
-opencvv-python-headless==4.10.0.84.post1
-pandas>=2.2.3,<3
-scipy>=1.14.1
+opencv-python-headless==4.10.0.84.post1
 
 # Utils
 PyYAML==6.0.1
 
 # Note:
-# - Removed torchvision (not used directly; avoids torch/torchvision ABI mismatches).
-# - Removed tensorflow; your code handles its absence unless .keras models are configured.
+# - TensorFlow intentionally omitted; your code falls back to timm when TF is not present.
 #   If you must use .keras weights on Cloud, set Python 3.10 and add: tensorflow==2.13.1
