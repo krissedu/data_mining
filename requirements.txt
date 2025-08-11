@@ -4,7 +4,9 @@ streamlit==1.35.0
 # Vision + ML
 # Pin to CPU-friendly versions known to have prebuilt wheels on Streamlit Cloud
 ultralytics==8.2.103
-torch==2.2.2
+# Match Streamlit Cloud's default Python (3.12) with compatible Torch/TV versions
+torch==2.5.1
+torchvision==0.20.1
 
 # Model zoo for EfficientNet/MobileNet (PyTorch)
 timm==0.9.16
