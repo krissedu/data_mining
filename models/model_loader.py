@@ -159,6 +159,20 @@ def build_classifier_from_config(cfg: dict) -> Optional[object]:
     class_names: List[str] = cfg.get("class_names", [])
     num_classes = int(cfg.get("num_classes", len(class_names) or 1000))
 
+    # Normalize some common aliases to valid timm model names
+    def _normalize_timm_name(name: str) -> str:
+        lname = name.lower().strip()
+        alias_map = {
+            "mobilenet_v2": "mobilenetv2_100",
+            "mobilenetv2": "mobilenetv2_100",
+            "mobilenet_v3_large": "mobilenetv3_large_100",
+            "mobilenet_v3_small": "mobilenetv3_small_100",
+            "efficientnet-b0": "efficientnet_b0",
+        }
+        return alias_map.get(lname, lname)
+
+    model_name = _normalize_timm_name(model_name)
+
     # Prefer TensorFlow/Keras weights only if TensorFlow is available
     if (
         _TF_AVAILABLE
