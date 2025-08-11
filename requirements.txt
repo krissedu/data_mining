@@ -14,7 +14,7 @@ timm==0.9.16
 # Imaging
 pillow==11.1.0
 numpy>=2.2.0,<3
-opencv-python-headless==4.10.0.84.post1
+opencv-python-headless==4.10.0.84  # fixed: removed .post1 (not available for Python 3.13)
 
 # Utils
 PyYAML==6.0.1
