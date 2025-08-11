@@ -12,9 +12,9 @@ torchvision==0.23.0
 timm==0.9.16
 
 # Imaging
-pillow==10.3.0
-numpy==1.26.4
-opencv-python-headless==4.10.0.84
+pillow==11.1.0
+numpy>=2.2.0,<3
+# omit opencv; ultralytics will pull a compatible version if needed
 
 # Utils
 PyYAML==6.0.1
