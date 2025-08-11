@@ -1,5 +1,5 @@
 # Core app
-streamlit==1.35.0
+streamlit>=1.41,<2
 
 # Vision + ML
 # Pin to CPU-friendly versions known to have prebuilt wheels on Streamlit Cloud
