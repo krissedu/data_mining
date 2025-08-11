@@ -159,15 +159,25 @@ def build_classifier_from_config(cfg: dict) -> Optional[object]:
     class_names: List[str] = cfg.get("class_names", [])
     num_classes = int(cfg.get("num_classes", len(class_names) or 1000))
 
-    if weights_path and os.path.exists(weights_path) and isinstance(weights_path, str):
+    # Prefer TensorFlow/Keras weights only if TensorFlow is available
+    if (
+        _TF_AVAILABLE
+        and weights_path
+        and isinstance(weights_path, str)
+        and os.path.exists(weights_path)
+    ):
         ext = os.path.splitext(weights_path)[1].lower()
         if ext in {".keras", ".h5"}:
-            return KerasClassifier(
-                weights_path=weights_path,
-                class_names=class_names,
-                model_name=model_name,
-                num_classes=num_classes,
-            )
+            try:
+                return KerasClassifier(
+                    weights_path=weights_path,
+                    class_names=class_names,
+                    model_name=model_name,
+                    num_classes=num_classes,
+                )
+            except Exception:
+                # Fall back to timm below if Keras model load fails
+                pass
 
     # Fall back to timm/PyTorch
     return TimmClassifier(

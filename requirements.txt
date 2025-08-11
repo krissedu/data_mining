@@ -1,22 +1,23 @@
 # Core app
-streamlit>=1.33.0
+streamlit==1.35.0
 
 # Vision + ML
-ultralytics>=8.2.0
-# Torch CPU wheels are fine; if you have CUDA, install the matching torch separately
-torch>=2.1.0
-torchvision>=0.16.0
+# Pin to CPU-friendly versions known to have prebuilt wheels on Streamlit Cloud
+ultralytics==8.2.103
+torch==2.2.2
 
-# Model zoo for EfficientNet/MobileNet
-timm>=0.9.16
-
-# TensorFlow for .keras models
-tensorflow>=2.13.0
+# Model zoo for EfficientNet/MobileNet (PyTorch)
+timm==0.9.16
 
 # Imaging
-pillow>=10.0.0
-numpy>=1.26.0
-opencv-python-headless>=4.9.0.80
+pillow==10.3.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
 
 # Utils
-PyYAML>=6.0.1
+PyYAML==6.0.1
+
+# Note:
+# - Removed torchvision (not used directly; avoids torch/torchvision ABI mismatches).
+# - Removed tensorflow; your code handles its absence unless .keras models are configured.
+#   If you must use .keras weights on Cloud, set Python 3.10 and add: tensorflow==2.13.1
