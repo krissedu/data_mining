@@ -1,0 +1,22 @@
+# Core app
+streamlit>=1.33.0
+
+# Vision + ML
+ultralytics>=8.2.0
+# Torch CPU wheels are fine; if you have CUDA, install the matching torch separately
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Model zoo for EfficientNet/MobileNet
+timm>=0.9.16
+
+# TensorFlow for .keras models
+tensorflow>=2.13.0
+
+# Imaging
+pillow>=10.0.0
+numpy>=1.26.0
+opencv-python-headless>=4.9.0.80
+
+# Utils
+PyYAML>=6.0.1

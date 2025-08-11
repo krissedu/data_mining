@@ -1,0 +1,18 @@
+yolo:
+  weights_path: weights/yolo.pt
+  conf_threshold: 0.25
+  iou_threshold: 0.45
+  target_class_name: id  # change to your YOLO class name for ID documents
+
+classification:
+  efficientnet:
+    model_name: efficientnet_b0
+    weights_path: weights/efficientnet.keras  # set your fine-tuned weights path
+    num_classes: 3
+    class_names: [ktp, passport, sim]
+  mobilenet:
+    model_name: mobilenet_v2
+    weights_path: weights/mobilenet.keras
+    num_classes: 3
+    class_names: [ktp, passport, sim]
+  topk: 3
