@@ -1,5 +1,8 @@
 yolo:
-  weights_path: weights/yolo.pt
+  # Accepts a local path or a model name like 'yolov8n.pt'. If a weights_url is provided
+  # and the local file is missing, it will be downloaded to weights_path.
+  weights_path: yolov8n.pt
+  weights_url: ""
   conf_threshold: 0.25
   iou_threshold: 0.45
   target_class_name: id  # change to your YOLO class name for ID documents

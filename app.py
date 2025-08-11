@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from urllib.request import urlretrieve
 from typing import List, Optional, Tuple
 
 import streamlit as st
@@ -56,8 +58,23 @@ def get_best_id_box(yolo_result, target_class_name: Optional[str]) -> Optional[T
 def load_yolo_detector(config: dict) -> Optional[YoloDetector]:
     yolo_cfg = config.get("yolo", {})
     weights = yolo_cfg.get("weights_path")
-    if not weights or not os.path.exists(weights):
+    weights_url = yolo_cfg.get("weights_url")
+
+    if not weights:
         return None
+
+    # If a URL is provided and the file doesn't exist locally, download it
+    try:
+        if (weights_url and isinstance(weights_url, str) and weights_url.startswith(("http://", "https://"))):
+            dest = Path(weights)
+            if not dest.exists():
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                urlretrieve(weights_url, dest.as_posix())
+    except Exception:
+        # Ignore download errors; Ultralytics can still handle hub names like 'yolov8n.pt'
+        pass
+
+    # Let Ultralytics handle hub names (e.g., 'yolov8n.pt') or local paths
     return YoloDetector(
         weights_path=weights,
         conf_threshold=float(yolo_cfg.get("conf_threshold", 0.25)),
