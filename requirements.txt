@@ -3,7 +3,7 @@ streamlit>=1.41,<2
 
 # Vision + ML
 # Pin to CPU-friendly versions known to have prebuilt wheels on Streamlit Cloud
-ultralytics==8.2.103
+ultralytics>=8.3.50,<9
 # Match Streamlit Cloud's Python 3.13 with compatible Torch/TV versions
 torch==2.8.0
 torchvision==0.23.0
@@ -14,7 +14,9 @@ timm==0.9.16
 # Imaging
 pillow==11.1.0
 numpy>=2.2.0,<3
-# omit opencv; ultralytics will pull a compatible version if needed
+opencvv-python-headless==4.10.0.84.post1
+pandas>=2.2.3,<3
+scipy>=1.14.1
 
 # Utils
 PyYAML==6.0.1
