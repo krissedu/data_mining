@@ -53,11 +53,15 @@ class TimmClassifier:
         self.transform = create_transform(**self.config)
 
         if weights_path and os.path.exists(weights_path):
-            state = torch.load(weights_path, map_location="cpu")
-            # Handle checkpoints that wrap weights in dicts
-            if isinstance(state, dict) and "state_dict" in state:
-                state = state["state_dict"]
-            self.model.load_state_dict(state, strict=False)
+            ext = os.path.splitext(weights_path)[1].lower()
+            # Only try to load PyTorch checkpoints. Skip .keras/.h5 files which
+            # require TensorFlow (handled by KerasClassifier when available).
+            if ext in {".pt", ".pth", ".bin"}:
+                state = torch.load(weights_path, map_location="cpu")
+                # Handle checkpoints that wrap weights in dicts
+                if isinstance(state, dict) and "state_dict" in state:
+                    state = state["state_dict"]
+                self.model.load_state_dict(state, strict=False)
 
         self.class_names = class_names
 
