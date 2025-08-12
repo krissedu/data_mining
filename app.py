@@ -74,12 +74,23 @@ def load_yolo_detector(config: dict) -> Optional[YoloDetector]:
         # Ignore download errors; Ultralytics can still handle hub names like 'yolov8n.pt'
         pass
 
-    # Let Ultralytics handle hub names (e.g., 'yolov8n.pt') or local paths
-    return YoloDetector(
-        weights_path=weights,
-        conf_threshold=float(yolo_cfg.get("conf_threshold", 0.25)),
-        iou_threshold=float(yolo_cfg.get("iou_threshold", 0.45)),
-    )
+    # If a local-looking path is provided but still doesn't exist, skip gracefully
+    dest = Path(weights)
+    looks_local = ("/" in weights or "\\" in weights or dest.suffix in {".pt", ".pth"})
+    if looks_local and not dest.exists() and not (weights.lower().startswith("yolo") and weights.endswith(".pt")):
+        st.warning("Bobot YOLO tidak ditemukan. Melewati deteksi dan menggunakan seluruh gambar untuk klasifikasi.")
+        return None
+
+    # Let Ultralytics handle hub model names (e.g., 'yolov8n.pt') or valid local paths
+    try:
+        return YoloDetector(
+            weights_path=weights,
+            conf_threshold=float(yolo_cfg.get("conf_threshold", 0.25)),
+            iou_threshold=float(yolo_cfg.get("iou_threshold", 0.45)),
+        )
+    except Exception as e:
+        st.warning(f"Gagal memuat YOLO: {e}")
+        return None
 
 
 @st.cache_resource(show_spinner=True)
