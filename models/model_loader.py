@@ -1,5 +1,7 @@
 import os
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from urllib.request import urlretrieve
 
 import torch
 import torch.nn.functional as F
@@ -156,6 +158,7 @@ class KerasClassifier:
 def build_classifier_from_config(cfg: dict) -> Optional[object]:
     model_name = str(cfg.get("model_name", "efficientnet_b0"))
     weights_path = cfg.get("weights_path")
+    weights_url: Optional[str] = cfg.get("weights_url")
     class_names: List[str] = cfg.get("class_names", [])
     num_classes = int(cfg.get("num_classes", len(class_names) or 1000))
 
@@ -172,6 +175,30 @@ def build_classifier_from_config(cfg: dict) -> Optional[object]:
         return alias_map.get(lname, lname)
 
     model_name = _normalize_timm_name(model_name)
+
+    # Optionally download classifier weights if a URL is provided and the file is missing
+    def _is_lfs_pointer(p: Path) -> bool:
+        try:
+            if not p.exists() or p.stat().st_size > 1024 * 50:
+                return False
+            head = p.read_text(errors="ignore")
+            return "git-lfs.github.com" in head
+        except Exception:
+            return False
+
+    if isinstance(weights_path, str) and weights_path:
+        dest = Path(weights_path)
+        if (
+            isinstance(weights_url, str)
+            and weights_url.startswith(("http://", "https://"))
+            and (not dest.exists() or _is_lfs_pointer(dest))
+        ):
+            try:
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                urlretrieve(weights_url, dest.as_posix())
+            except Exception:
+                # Continue without downloaded weights; downstream code will handle absence
+                pass
 
     # Prefer TensorFlow/Keras weights only if TensorFlow is available
     if (

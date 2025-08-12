@@ -1,8 +1,7 @@
 yolo:
-  # Accepts a local path or a model name like 'yolov8n.pt'. If a weights_url is provided
-  # and the local file is missing, it will be downloaded to weights_path.
+  # Use your custom detector; if weights_url is set and file missing/LFS, it will be downloaded
   weights_path: weights/yolo.pt
-  weights_url: ""
+  weights_url: "https://huggingface.co/Krizz9/yolo/resolve/main/yolo.pt?download=true"
   conf_threshold: 0.25
   iou_threshold: 0.45
   target_class_name: id  # change to your YOLO class name for ID documents
@@ -10,12 +9,14 @@ yolo:
 classification:
   efficientnet:
     model_name: efficientnet_b0
-    weights_path: weights/efficientnet.keras  # set your fine-tuned weights path
+    weights_path: weights/efficientnet.keras
+    weights_url: "https://huggingface.co/Krizz9/efficient/resolve/main/efficientnet.keras?download=true"
     num_classes: 3
     class_names: [ktp, passport, sim]
   mobilenet:
     model_name: mobilenet_v2
     weights_path: weights/mobilenet.keras
+    weights_url: "https://huggingface.co/Krizz9/mobile/resolve/main/mobilenet.keras?download=true"
     num_classes: 3
     class_names: [ktp, passport, sim]
   topk: 3

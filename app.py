@@ -65,13 +65,27 @@ def load_yolo_detector(config: dict) -> Optional[YoloDetector]:
 
     # If a URL is provided and the file doesn't exist locally, download it
     try:
-        if (weights_url and isinstance(weights_url, str) and weights_url.startswith(("http://", "https://"))):
-            dest = Path(weights)
-            if not dest.exists():
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                urlretrieve(weights_url, dest.as_posix())
+        dest = Path(weights)
+        # Detect Git LFS pointer files and treat them as missing
+        def _is_lfs_pointer(p: Path) -> bool:
+            try:
+                if not p.exists() or p.stat().st_size > 1024 * 50:
+                    return False
+                head = p.read_text(errors="ignore")
+                return "git-lfs.github.com" in head
+            except Exception:
+                return False
+
+        need_download = (
+            weights_url
+            and isinstance(weights_url, str)
+            and weights_url.startswith(("http://", "https://"))
+            and (not dest.exists() or _is_lfs_pointer(dest))
+        )
+        if need_download:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            urlretrieve(weights_url, dest.as_posix())
     except Exception:
-        # Ignore download errors; Ultralytics can still handle hub names like 'yolov8n.pt'
         pass
 
     # If a local-looking path is provided but still doesn't exist, skip gracefully
@@ -89,7 +103,14 @@ def load_yolo_detector(config: dict) -> Optional[YoloDetector]:
             iou_threshold=float(yolo_cfg.get("iou_threshold", 0.45)),
         )
     except Exception as e:
-        st.warning(f"Gagal memuat YOLO: {e}")
+        # Provide quick diagnostics to the UI
+        try:
+            dest = Path(weights)
+            exists = dest.exists()
+            size = dest.stat().st_size if exists else 0
+            st.warning(f"Gagal memuat YOLO dari '{dest}': exists={exists}, size={size} bytes. Error: {e}")
+        except Exception:
+            st.warning(f"Gagal memuat YOLO: {e}")
         return None
 
 
